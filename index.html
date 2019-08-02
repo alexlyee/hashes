@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hashes</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="import" href="sections/getintouch.html">
+    <link rel="import" href="sections/welcome.html">
+    <link rel="import" href="sections/whatwedo.html">
+    <link rel="import" href="sections/whoweare.html">
+    <link rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <section id="sidebar">
+        <div class="inner">
+            <nav>
+                <ul>
+                    <li><a id="welcome-menu" data-section="welcome" href="#">Welcome</a></li>
+                    <li><a data-section="whoweare" href="#">Who we are</a></li>
+                    <li><a data-section="whatwedo" href="#">What we do</a></li>
+                    <li><a data-section="getintouch" href="#">Get in touch</a></li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+    </div>
+
+    <nav>
+        <div class="nav-wrapper">
+            <a class="brand-logo center">Hashes</a>
+        </div>
+    </nav>
+    We are using node <script>document.write(process.versions.node)</script>,
+    Chromium <script>document.write(process.versions.chrome)</script>,
+    and Electron <script>document.write(process.versions.electron)</script>.
+    <ul></ul>
+
+    <!-- Footer -->
+    <footer id="footer" class="wrapper style1-alt">
+        <div class="inner">
+            <ul class="menu">
+                <li>&copy; Hashes. All rights reserved.</li><li>Design: <a href="https://github.com/alexlyee/hashes">Electrum</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- deals with native drag & drop to "drag". -->
+    <a href="#" id="drag">item</a> 
+    <script type="text/javascript" charset="utf-8">
+    document.getElementById('drag').ondragstart = (event) => {
+        event.preventDefault()
+        ipcRenderer.send('ondragstart', '/path/to/item')
+    }
+    </script>
+    <!-- renderer.js is called after mainwindow.html is loaded. -->
+    <script src="./renderer.js">
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+        const ul = document.querySelector('ul');
+
+        // Add item
+        ipcRenderer.on('item:add', function(e, item){
+            ul.className = 'collection'; // Dynamically add class name for materialize
+            const li = document.createElement('li');
+            li.className = 'collection-item';
+            const itemText = document.createTextNode(item);
+            li.appendChild(itemText);
+            ul.appendChild(li);
+        });
+
+        // Clear items
+        ipcRenderer.on('item:clear', function(){
+            ul.innerHTML = '';
+            ul.className = '';
+        });
+
+        // Remove item by double click
+        ul.addEventListener('dblclick', removeItem);
+
+        function removeItem(e){
+            e.target.remove();
+            if(ul.children.length == 0){
+                ul.className = '';
+            }
+        }
+    </script>
+    <!-- Scripts -->
+    <script>window.$ = window.jQuery = require('./assets/js/jquery.min.js');</script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
